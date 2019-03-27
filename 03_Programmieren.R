@@ -26,6 +26,7 @@ f <- function() {
 f()
 rm(f)
 
+#
 f <- function() {
 
   y <- 1
@@ -34,14 +35,13 @@ f <- function() {
 
 f()
 
-# note: sucht im Suchpfad zum Zeitpunkt des calls, nicht zum Zeitpunkt 
-# der Definition --  sollte wenn möglich vermieden werden (siehe debugging)
+# Dynamisches Nachschlagen
 x <- 2 
 f()
 
 rm(f, x)
 
-# gilt auch bei geschachtelten Funktionen
+#
 x <- 2 
 f <- function() {
   y <- 3
@@ -54,29 +54,28 @@ f <- function() {
 f()
 rm(f, x)
 
-# gilt auch bei closures (Funktionen die von andere Funktionen erzeugt werden)
-# auf die komme ich gleich nochmal
+#
 f <- function(x) {
   y <- 3
-  function() { ## letztes Statement in der Funktion wird als Ergebnis zurück
-    c(x, y)    ## returnt; hier: eine Funktion
+  function() { # return
+    c(x, y)    
   }
 }
 
-g <- f(1) ## erzeuge Funktion für die gilt, dass x = 1 und y = 3 ist
+g <- f(1)
 g()
 
 rm(f, g)
 
-# oh je
+# 
 f <- function(y) {
   z <- 3
-  function() { ## letztes Statement in der Funktion wird als Ergebnis zurück
-    c(x, y, z) ## returnt; hier: eine Funktion
+  function() {
+    c(x, y, z)
   }
 }
 
-g <- f(1) ## erzeuge Funktion für die gilt, dass y = 1 und z = 3 ist
+g <- f(1)
 g() 
 
 x <- 2
@@ -85,19 +84,17 @@ g()
 x <- 3
 g()
 
-h <- f(5) ## erzeuge Funktion für die gilt, dass y = 1 und z = 3 ist
+h <- f(5)
 h()
 
-
+#
 environment(g)
 ls(envir = environment(g)) # beachte: x existiert hier nicht
 
 rm(f, g, h)
 
-# gilt auch unabhängig vom zu suchenden Typ 
-# --> suchpfad beachten 
-# --> maskieren von Funktionen (reihenfolge des pakete ladens kann Bedeutung 
-#  haben)
+# Funktionen und Variablen
+
 f <- function(x) x + 1
 g <- function() {
   f <- function(x) x * 2
@@ -118,9 +115,22 @@ g <- function() {
 g()
 rm(f, g)
 
-# > environments ----
+# Neuanfang
 
-# neues env
+f <- function() {
+  if(!exists("a")) {
+    a <- 1
+  } else {
+    a <- a + 1
+  }
+  a
+}
+f()
+f()
+
+# > Umgebungen ----
+
+# Grundlegendes
 e <- new.env()
 
 e$a <- 1
@@ -128,8 +138,7 @@ e$b <- "a"
 e$c <- FALSE
 e$d <- 1:3
 
-# env have reference semantics: when modifying a binding (obj in an env) the 
-# objects are not copied but are modified in place
+# Referenzsemantik
 f <- function(x) {
   x$d <- 4:6
   invisible()
@@ -138,36 +147,37 @@ f(e)
 e$d
 
 #
-ls(name = e) # every object in an environment has a unique name (this is different from lists)
-e[[1]]       # there is no order among the objects (this is different from lists)
+ls(name = e)
+e[[1]]      
 e$a
 ls.str(e)
 
-parent.env(e) # an environment has a parent (this is different from lists)
-              # parents are used to implement lexical scoping
-
+#
+parent.env(e) 
+              
 identical(parent.env(e), globalenv())
 search()
 parent.env(globalenv())
-parent.frame() # gives you the calling environment
+parent.frame() 
+
 identical(globalenv(), environment())
 identical(baseenv(), as.environment("package:base"))
 identical(emptyenv(), parent.env(as.environment("package:base")))
 
-# $, [[ only work in the env; use get() for regular scoping rules
+# Zugriffsoperatoren
 get("d", e)
 x <- 1
 get("x", e)
 
-# deletion via rm; not <-NULL (this is different from lists)
+# Entfernen
 rm("a", envir = e)
 ls.str(e)
 
-# exists similar to get but returns boolean; possible to only look in  e
+# 
 exists("x", envir = e)
 exists("x", envir = e, inherits = FALSE)
 
-#
+# Zusammenfassung
 where <- function(name, env = parent.frame()) {
   if (identical(env, emptyenv())) {
     stop("Can't find ", name, call. = FALSE)
@@ -182,29 +192,30 @@ where("x")
 where("b", e)
 try(where("a", e))
 
-# > function environments / closures ---- 
+# > Funktions-Umgebungen / closures ---- 
 
-# enclosing environment
+# Einschließende Umgebungen
 environment(where)
 ls(environment(where))
 rm("x")
 ls(environment(where))
 
 
-# binding environment # where is the name of the method bound?
+# Bindende Umgebungen 
 e$f <- function() 1
 environment(e$f)
 where("f", e)
 
+# Einschließende vs. Bindende Umgebungen 
 environment(sd) 
 where("var")
 
-sd(1:10) # uses var
-var <- function(x, na.rm = TRUE) 100 # if we overwrite var
-sd(1:10) ## sd still uses var from the enclosing env. not the binding env 
-         ## namespaces werden wir später noch benutzen, wenn wir Pakete bauen
+sd(1:10)
+var <- function(x, na.rm = TRUE) 100
+sd(1:10)
+        
 
-# execution environment
+# Ausführende Umgebung
 g <- function(x) {
   if(!exists("a", inherits = FALSE)) {
     a <- 1
@@ -216,6 +227,7 @@ g <- function(x) {
 g(10)
 g(10)
 
+#
 f <- function(x) {
   a <- 2
   x + a
@@ -224,6 +236,7 @@ x <- 2
 f()
 f(4) # hier wird x festgelegt
 
+#
 plus <- function(x) {
   function(y) x + y
 }
@@ -232,7 +245,7 @@ new_e <- environment(f)
 ls(new_e)
 new_e$x
 
-# calling environment
+# Aufrufende Umgebung
 f <- function() {
   x <- 10
   function() {
@@ -258,12 +271,11 @@ i()
 x <- 11
 i()
 
-
 # Elemente von Funktionen ----
+
 # > Argumente ----
 
-
-# formelle vs. tatsächliche argumente und wie werden die aufeinander gemappt
+# formelle vs. tatsächliche Argumente und wie werden die aufeinander abgebildet
 
 f <- function(abcdef, bcde1, bcde2) {
   c("a" = abcdef, "b1" = bcde1, "b2" = bcde2) 
@@ -274,33 +286,29 @@ f(1, 2, "a" = 3)
 f(1, 2, "b" = 3)
 formals(f)
 
- ## use positional matching only for the first one or two arguments; often those 
- ## are the arguments without defaults
-
 do.call(f, list(1, 2, 3))
 
- ## defaults
+# Default
 f <- function(abcdef, bcde1, bcde2 = 3) {
   c("a" = abcdef, "b1" = bcde1, "b2" = bcde2) 
 }
 
 f(1, 2)
 
- ## defaults can be functions of previous arguments (due to lazy evaluation)
+# Lazy Evaluation -- defaults können von anderen Argumenten abhängen
 f <- function(abcdef, bcde1, bcde2 = 3 + abcdef) {
   c("a" = abcdef, "b1" = bcde1, "b2" = bcde2) 
 }
 
 f(1, 2)
 
- ## nicht empfehlenswert, aber möglich auch vorhergehende Argumente in beziehungne 
- ## zu späteren Argumenten zusetzen
+# Nicht zu empfehlen, aber möglich
 f <- function(abcdef = bcde1 / 4, bcde1, bcde2 = 3 + abcdef) {
   c("a" = abcdef, "b1" = bcde1, "b2" = bcde2) 
 }
-
 f(bcde1 = 2)
 
+# Nicht zu empfehlen, aber möglich
 f <- function(abcdef, bcde1, bcde2 = efg) {
   efg <- abcdef + bcde1^2
   c("a" = abcdef, "b1" = bcde1, "b2" = bcde2) 
@@ -311,15 +319,14 @@ f(1, 2)
 f <- function(x) {
   10
 }
-f(stop("give me an error")) # imput x wird nie ausgewertet
+f(stop("give me an error"))
 
 f <- function(x) {
-  force(x) # umgehe lazy eval
+  force(x)
   10
 }
 f(stop("give me an error"))
 
- ##
 f <- function(x = ls()) {
   a <- 10
   x
@@ -327,7 +334,7 @@ f <- function(x = ls()) {
 f()
 f(ls())
 
- ## lazyness usefull in logical operations
+# - logischen Operatoren
 x <- NULL
 if(x > 0){}
 if(!is.null(x) && x > 0){}
@@ -338,55 +345,52 @@ if(is.null(x)) stop("x is null")
 
 # ... 
 ?plot
-?plot.default # flexible but not transparent
+?plot.default
 
- ## am einfachsten mit list(...) abfangen
 f <- function(...) {
   names(list(...))
 }
 f("a" = 1, "b" = 2)
-sum(1, 2, 3, NA, na.mr = TRUE) #misspelled arguments still fall into ...
-sum(1, 2, 3, NA, na.rm = TRUE) #misspelled arguments still fall into ...
-  
-# > infix/ replacement ----
 
-# infix
+sum(1, 2, 3, NA, na.mr = TRUE)
+sum(1, 2, 3, NA, na.rm = TRUE)
+  
+# > Infix- und Ersetzungs-Funktionen ----
+
+# Infix
 '%+%' <- function(a, b) paste0(a, b) ## must have %
 "new " %+% "string"
 
-# replacement
+# Ersetzung
 'second<-' <- function(x, value) {
   x[2] <- value
   x
 }
 x <- 1:5
-second(x) <- 4 # not .primitive -> copy semantics
+second(x) <- 4
 x
+`[<-`
 
-'modify<-' <- function(x, index, value) { # additional arguments go in between
+'modify<-' <- function(x, index, value) {
   x[index] <- value
   x
 }
 
 # > return, on.exit, closures ----
 
-# last expression evaluated is returned
+# return
 f <- function(x) {
   if(x < 10) 0 else 10
 }
 f(5)
 f(12)
 
-# invisible
 f <- function(x) {
   if(x < 10) invisible(0) else invisible(10)
 }
 a <- f(5)
 a
 (f(5))
-
-
-# side - effects
 
 # on.exit
 my_plot <- function() { 
@@ -412,7 +416,7 @@ j <- f()
 i()
 j()
 
- ## reduziere Code beim programmieren vieler ähnlicher Funktionen
+# - reduziere Code beim Programmieren vieler ähnlicher Funktionen
 power <- function(exponent) {
   function(x) {
     x^exponent
@@ -425,7 +429,7 @@ zero(5)
 ident(5)
 square(5)
 
- ## Funktionen als liste von functionen
+# - Liste von Funktionen
 f <- function(x, ...) {
   l <- list("mean" = mean(x, ..., na.rm = TRUE),
             "median" = median(x, ...,  na.rm = TRUE),
@@ -438,18 +442,16 @@ x <- 1:10
 l <- list("mean" = mean, "median" = median, "sd" = sd)
 lapply(l, function(f) f(x, na.rm = TRUE))
 
-
- ## use functions as a return argument of (
- ## to call it anonymously
+# - anonyme Aufrufe
 (function(x) x + 3)(10) 
 
- ## functional programming
+# - Funktionale Programmierung
 Negate
 ?Negate
 
 # Objektorientierung (S3) ----
 
-# base-typen
+# base-Typen
 f <- function() {}
 typeof(f)
 is.function(f)
@@ -459,7 +461,6 @@ is.primitive(sum) # andere: is.logical, is.numeric, is.character
 typeof("a")
 
 # die meisten Objekte sind S3-Objekte 
-
 df <- data.frame("x" = 1:10, y = letters[1:10])
 class(df)
 is.object(df)
@@ -468,51 +469,45 @@ is.object(df$x) # base-Typen sind keine Objekte
 is.object(df$y) # Faktoren sind keine base-Typen
 isS4(df) # data.frame ist kein S4-Objekt
 
-# um herauszufinden, ob eine Funktion eine generische Funktion ist, schaun wir 
+# generische Funktionen
 mean
-sum # ?"internal generic"
+sum 
+?"internal generic"
 
-# für eine Klasse ist es aufgabe der generischen Funktion die richtige Methode 
-
-# welche methoden es für eine generic gibt, findet man mit methods()
 methods("plot")
 methods(class = "data.frame")
 
-# define classes
+# Klasse festlegen
 x <- structure(list(), class = "my_class")
- ## oder
+
 x <- list()
 class(x) <- "my_class"
 
 class(x)
 inherits(x, "my_class")
 
-# Es können auch mehrere Klassen vorgegeben werden wodurch eine Vererbungsstruktur 
 glm
 
-# Häufig existiert eine Konstruktor-Funktion (z.B. auch Modellanpassung)
+# Konstruktor
 my_class <- function(x) {
   if(!is.numeric(x)) stop("x must be numeric")
   structure(list(x), class = "my_class")
-} # oder siehe glm
+}
 
-# darüber hinaus gibt es keinen check ob die Klassenzuweisung sinnvoll ist
 df
 class(df) <- "lm"
-print(df) # kann nicht ausgegeben werden, da die print-Methode der lm-Klasse hier 
-          # keinen Sinn ergibt, aber 
-str(df)   # die Informationen sind noch alle da
+print(df)
+         
+str(df)  
 
-# neue generics: use UseMethod()
+# Eigene Generische Funktionen
 my_generic <- function(x) UseMethod("my_generic")
 
 x <- my_class(1:5)
 my_generic.my_class <- function(x) "meine Klasse"
 
 my_generic(x)
-my_generic(df) # usemethod sucht nach funktionen paste0(generic, ".", c(class(x), "default"))
-               # hist ist class(df) "lm" -- haben wir oben so gesetzt
-               # für die gibt's die generic nicht und eine default-generic gibt's auch nicht
+my_generic(df)
 
 my_generic.default <- function(x) "eine andere Klasse" 
 class(df)
@@ -538,11 +533,11 @@ slotNames(fm1) # slots functionieren wie listen
 fm1@call
 slot(fm1, "call")
 
-
 # Debugging ----
+
 # > debugging ----
 
-# nützlich: Schleifenparameter sind Variablen in der globalen Umgebung
+# nützlich
 ii <- 0
 ii
 for (ii in 1:100) if (ii == 35) message()
@@ -551,7 +546,7 @@ ii
 for (ii in 1:100) if (ii == 35) stop()
 ii
 
-# error inspector / traceback() 
+# Error Inspector / traceback() 
 f <- function(a) g(a)
 g <- function(b) h(b)
 h <- function(c) i(c)
@@ -564,42 +559,43 @@ f(10)
 traceback()
 
 # rerun with debug / options(error = browser)
- ## open interactive session where error occured
- ## Rstudio menu "Debug" -> On Error -> Break in Code
  ## [n]ext step in the function, 
  ## [s]tep into function to work line by line, 
  ## [f]inish current loop
  ## [Q]uit
 f(10)
- ## R-Console
+
+# (optional) in R-Konsole
 options("error" = browser) 
 f(10)
-options("error" = NULL) # reset in console
+options("error" = NULL)
 
 # breakpoints / browser() 
 source(here("03b_error-source-02.R"))
 f(10)
 
-# set breakpoint at beginning of function
+# debug
 debug(f)
 f(10)
 undebug(f)
 
-# > communicating / condition handling ----
+# > Condition handling ----
 
-# neben Fehlern werden von Funktionen oft noch warnings oder messages ausgeworfen
+# conditions
 f <- function(x) if(!is.numeric(x)) stop("x muss numerisch sein")
-g <- function(x) if(!is.numeric(x)) warning("x sollte numerisch sein; ich handle das")
+g <- function(x) if(!is.numeric(x)) warning("x sollte numerisch sein; ich mach' das")
 h <- function(x) if(!is.numeric(x)) message("x ist ", typeof(x))
-i <- function(x) if(!is.numeric(x)) cat("x ist ", typeof(x)) # oder print(paste0("x ist ", typeof(x)))
+i <- function(x) if(!is.numeric(x)) cat("x ist", typeof(x)) # ggf. print
 
 f("a") 
 g("a")
 h("a")
 i("a")
 
+# handling
 options("warn" = 2) ## default 0
 g("a")
+options("warn" = 0)
 
 try(f("a"))
 try(f("a"), silent = TRUE)
@@ -611,25 +607,25 @@ try({
 a
 b
 
-# handling
+# - Behandeln von Fehlern
 res <- try(f("a"), silent = TRUE)
 class(res)
 class(try(1 + 2))
 if(inherits(res, "try-error")) message("do something else")
 
-# default-werte
+#
 res <- NULL
 try(res <- f("a"), silent = TRUE)
 res
 
- ## tryCatch(expr, message = expr, warning = expr, error = expr, finally = expr)
+# tryCatch(expr, message = expr, warning = expr, error = expr, finally = expr)
 
-# andere handlings
+# Unterdrücken von Ausgabe
 options("warn" = 0)
 try(f("a"), silent = TRUE)
 suppressWarnings(g("a"))
 suppressMessages(h("a"))
 suppressMessages(i("a")) 
 
-# defensiv programming
+# > Defensives programmieren ----
  

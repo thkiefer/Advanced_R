@@ -1,7 +1,17 @@
+where <- function(name, env = parent.frame()) {
+  if (identical(env, emptyenv())) {
+    stop("Can't find ", name, call. = FALSE)
+  } else if(exists(name, envir = env, inherits = FALSE)) {
+    env
+  } else {
+    where(name, parent.env(env))
+  }
+}
+
 # Performanz ----
 
-# > some examples for tradeoff between speed and easiness ---- 
-# extreme dynamism: 
+# > Performanz vs. Flexibilität ---- 
+
 x <- 0L 
 for(i in 1:1e6) x <- x + 1 
 
@@ -25,52 +35,56 @@ search()
 
 # lazy evaluation
 
-# > time your R-Code/benchmark ----
+# > Profiling ----
 
+# system.time
 x <- runif(100)
 sqrt(x)
 exp(log(x) / 2)
 system.time(sqrt(x))
 system.time(x^0.5)
 
-x <- runif(1e6)
-system.time(sqrt(x))
-system.time(x^0.5)
+n <- 1e6
+system.time(for(ii in 1:n) sqrt(x))
+system.time(for(ii in 1:n) x^0.5)
 
-system.time(for(ii in 1:100000) sqrt(x))
-system.time(for(ii in 1:100000) x^0.5)
+ptm <- proc.time()
+for(ii in 1:n) sqrt(x)
+proc.time() - ptm
 
-require(microbenchmark)
+# microbenchmark
+library(microbenchmark)
 x <- runif(100)
 microbenchmark(sqrt(x))
 microbenchmark(sqrt(x), x^0.5) 
 
 microbenchmark(sqrt(x), x^0.5, times = 1000) 
+
+# Rprof
 ?Rprof ## for sourcefiles
-devtools::install_github("hadley/lineprof")
+# devtools::install_github("hadley/lineprof")
 
 tmp <- tempfile()
+library(here)
 source(here("04a_profiling-source-01.R"))
 Rprof(tmp, interval = .01)
 f()
 Rprof(NULL)
 summaryRprof(tmp)
 
-# > Optimise R-code ----
-## also http://www.burns-stat.com/pages/Tutor/R_inferno.pdf
+# > Optimieren ----
 
-# look for existing solutions
+# Vorhandene Lösungen?
 
 # sparsam programmieren
 x <- 1:100
-microbenchmark(any(x == 10), 
-               10 %in% x) 
+microbenchmark(any(x == 10), 10 %in% x) 
 
 x <- rep(letters[1:3], each = 50)
-microbenchmark(factor(x),
-               factor(x, levels = c("a", "b", "c")))
+microbenchmark(factor(x), factor(x, levels = c("a", "b", "c")))
 
 df <- data.frame(x = runif(100), y = runif(100))
+
 microbenchmark({
   sub <- df[sample(nrow(df), 10), ]
   cor(sub$x, sub$y)
@@ -96,7 +110,7 @@ microbenchmark(
 all.equal(c(r %*% x), colSums(x))
 
 
-# rowsum
+# - rowsum
 x <- matrix(runif(100), ncol = 5)
 group <- sample(1:8, 20, TRUE)
 microbenchmark(
@@ -106,18 +120,19 @@ microbenchmark(
 rowsum
 rowsum.default
 
+# - integer-Matrix
 mx <- matrix(runif(1e6), ncol = 2)
 bmx<- matrix(NA, nrow(mx) / 2, ncol(mx))
-for(i in 1:nrow(bmx)) bmx[i, ]<- mx[2 * i - 1, ] * mx[2 * i, ]
+for(i in 1:nrow(bmx)) bmx[i, ] <- mx[2 * i - 1, ] * mx[2 * i, ]
 all.equal(bmx,
           mx[seq(1, nrow(mx), by = 2), ] * mx[seq(2, nrow(mx), by = 2), ])
 
-# vectorized if
+# - vectorized if
 hit <- NA 
 for(i in 1:1e6) if(runif(1) < .3) hit[i] <- TRUE 
 fasthit <- ifelse(runif(1e6) < .3, TRUE, NA)
 
-# avoid copies
+# Kopieren vermeiden
 n <- 1000
 microbenchmark(
   {
@@ -131,6 +146,7 @@ microbenchmark(
   vec <- 1:n # vektorisiert
 )
 
+# - cbind/rbind
 n <- 10
 my.df <- data.frame(a = character(0), 
                     b = numeric(0))
@@ -140,6 +156,7 @@ for(i in 1:n){
 }
 my.df
 
+# - rbind naiv
 f1 <- function(n) {
   my.df <- data.frame(a = character(0), 
                       b = numeric(0))
@@ -151,6 +168,7 @@ f1 <- function(n) {
   my.df
 }
 
+# - rbind schlauer
 f2 <- function(n) {
   current.N <- 10 * n
   my.df<- data.frame(a = character(current.N),
@@ -172,6 +190,7 @@ f2 <- function(n) {
   my.df
 }
 
+# - rbind: do.call
 f3 <- function(n) {
   my.list<- vector('list', n)
   for(i in 1:n) { 
@@ -184,10 +203,9 @@ f3 <- function(n) {
 }
 microbenchmark(f1(10), f2(10), f3(10))
 
-# Es gibt die Möglichkeite R-Funktionen byte-compile
+# Byte-compile
 loadNamespace
 
-# ByteCompile: true in R-package description
 my_sum <- function(x){
   out <- 0
   for(ii in 1:length(x)) out <- out + x[ii]
@@ -197,17 +215,14 @@ bcmp_my_sum <- compiler::cmpfun(my_sum)
 x <- 1:1000
 microbenchmark(my_sum(x), bcmp_my_sum(x), sum(x))
 
-# parallel
+# Paralleles programmieren
 
-# Load the package and check how many cores you have:
 library(parallel)
 detectCores()
-phys_cores <- detectCores(logical = FALSE) #physical vs. logical cores
+phys_cores <- detectCores(logical = FALSE) 
 
-
-# on windows start a cluster
+# - start
 cl <- makeCluster(phys_cores, type = "PSOCK") 
-
 cl
 typeof(cl)
 length(cl)
@@ -215,10 +230,11 @@ cl[[1]]
 names(cl[[1]])
 stopCluster(cl)
 
-# copy object to cluster
+# - auf Cluster durchführen
 clusterApply(cl, rep(1000, phys_cores), fun = function(x) mean(rnorm(x, mean = 5)))
 clusterApply(cl, rep(1000, 25), fun = function(x) mean(rnorm(x, mean = 5))) 
 
+# - library
 library(mvtnorm)
 clusterEvalQ(cl, exists("dmvnorm"))
 clusterEvalQ(cl, {
@@ -226,7 +242,7 @@ clusterEvalQ(cl, {
   exists("dmvnorm")
 })
 
-# sharing data
+# - auf Cluster kopieren
 x <- 1:10
 clusterEvalQ(cl, x) 
 clusterExport(cl, "x")
@@ -243,7 +259,7 @@ cppFunction('int add(int x, int y, int z) {
 add
 add(1, 2, 3)
 
-# vektor-input
+# Vektor-input
 cppFunction('int sumC(NumericVector x) {
                int n = x.size();
                double tot = 0;
@@ -262,12 +278,12 @@ sumR <- function(x) {
 x <- 1:100
 microbenchmark(sumR(x), sumC(x), sum(x))
 
-
+# SourceCpp
 sourceCpp(here("04b_sourceCpp.cpp"))
 
 # Rcpp sugar
 cppFunction('int sumC2(NumericVector x) {
                return sum(x);
              }')
-microbenchmark(sumC2(x), sumC(x), sum(x))
+microbenchmark(sumR(x), sumC2(x), sumC(x), sum(x))
 

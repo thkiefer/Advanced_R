@@ -1,6 +1,26 @@
 # Motivation ----
 
 # organisatorisches
+
+library(here)
+library(rmarkdown)
+library(microbenchmark)
+library(devtools)
+library(roxygen2)
+library(lme4)
+library(mvtnorm)
+library(Rcpp)
+library(microbenchmark)
+library(TAM)
+
+# install.packages(c("here", "rmarkdown", "microbenchmark", 
+#                    "devtools", "roxygen2", "lme4",
+#                    "mvtnorm", "Rcpp",
+#                    "TAM"), 
+#                  dependencies = TRUE,
+#                  type = "binary"
+# )
+
 # Warm Up
 RXKCD::getXKCD(1954) # Danke, Gabi!
 base::rowsum
@@ -187,7 +207,7 @@ cbind(df, data.frame(z = 1:3))
 str(cbind(df, z = 1:3)) 
 rbind(df, data.frame(y = "z", x = 10))
 
-str(data.frame(cind(a = 1:2, b = c("a", "b")))) 
+str(data.frame(cbind(a = 1:2, b = c("a", "b")))) 
 
 str(data.frame(a = 1:2, b = c("a", "b"), stringsAsFactors = FALSE))
 
