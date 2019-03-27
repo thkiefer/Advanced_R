@@ -13,7 +13,7 @@ library(Rcpp)
 library(microbenchmark)
 library(TAM)
 
-# install.packages(c("here", "rmarkdown", "microbenchmark", 
+# install.packages(c("here", "yaml", "rmarkdown", "microbenchmark", 
 #                    "devtools", "roxygen2", "lme4",
 #                    "mvtnorm", "Rcpp",
 #                    "TAM"), 
