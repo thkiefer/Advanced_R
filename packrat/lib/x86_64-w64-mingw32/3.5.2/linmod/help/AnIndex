@@ -1,0 +1,4 @@
+linmod	linmodEst
+linmod.default	linmod-internal
+linmodEst	linmodEst
+print.linmod	linmod-internal
