@@ -1,0 +1,11 @@
+CQmodel                 ConQuest Output Processing
+WrightMap               Wright Map: IRT Item-Person Map
+fitgraph                Item Fit Graphs
+item.person.data        Processing CQmodel objects for plotting
+item.side               Wright Map item sides
+make.deltas             Calculate Master's Delta parameters.
+make.thresholds         Calculate Thurstonian thresholds.
+person.side             Wright Map person sides
+plotCI                  Plotting confidence intervals and DIF
+ppPlot                  Person probability plots
+wrightMap               wrightMap: item-person maps

@@ -1,0 +1,38 @@
+Kapitel 0               Kapitel 0: Konzeption der Ueberpruefung der
+                        Bildungsstandards in Oesterreich
+Kapitel 1               Kapitel 1: Testkonstruktion
+Kapitel 10              Kapitel 10: Reporting und Analysen
+Kapitel 11              Kapitel 11: Aspekte der Validierung
+Kapitel 2               Kapitel 2: Stichprobenziehung
+Kapitel 3               Kapitel 3: Standard-Setting
+Kapitel 4               Kapitel 4: Differenzielles Itemfunktionieren in
+                        Subgruppen
+Kapitel 5               Kapitel 5: Testdesign
+Kapitel 6               Kapitel 6: Skalierung und Linking
+Kapitel 7               Kapitel 7: Statistische Analysen produktiver
+                        Kompetenzen
+Kapitel 8               Kapitel 8: Fehlende Daten und Plausible Values
+Kapitel 9               Kapitel 9: Fairer Vergleich in der Rueckmeldung
+LSAmitR-package         Daten, Beispiele und Funktionen zu 'Large-Scale
+                        Assessment mit R'
+datenKapitel01          Illustrationsdaten zu Kapitel 1,
+                        Testkonstruktion
+datenKapitel02          Illustrationsdaten zu Kapitel 2,
+                        Stichprobenziehung
+datenKapitel03          Illustrationsdaten zu Kapitel 3,
+                        Standard-Setting
+datenKapitel04          Illustrationsdaten zu Kapitel 4,
+                        Differenzielles Itemfunktionieren in Subgruppen
+datenKapitel05          Illustrationsdaten zu Kapitel 5, Testdesign
+datenKapitel06          Illustrationsdaten zu Kapitel 6, Skalierung und
+                        Linking
+datenKapitel07          Illustrationsdaten zu Kapitel 7, Statistische
+                        Analysen produktiver Kompetenzen
+datenKapitel08          Illustrationsdaten zu Kapitel 8, Fehlende Daten
+                        und Plausible Values
+datenKapitel09          Illustrationsdaten zu Kapitel 9, Fairer
+                        Vergleich in der Rueckmeldung
+datenKapitel10          Illustrationsdaten zu Kapitel 10, Reporting und
+                        Analysen
+quintfunct              Large-Scale Assessment mit R: Hilfsfunktionen
+                        aus den Kapiteln

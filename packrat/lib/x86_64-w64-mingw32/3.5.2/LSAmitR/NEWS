@@ -1,0 +1,21 @@
+********************************************************
+****     CHANGES IN LSAmitR PACKAGE VERSIONS        ****
+********************************************************
+
+-------------------------------------------------------------
+CHANGES IN VERSION 1.0-2    (2018-06-08)  --  CRAN 1.0-2
+-------------------------------------------------------------
+
+Notes:
+* Updated metadata documented in *-package Rd file 
+  using Rd macro references to the package metadata values. 
+  (CRAN request)
+
+
+-------------------------------------------------------------
+CHANGES IN VERSION 1.0-1    (2018-01-08)  --  CRAN 1.0-1
+-------------------------------------------------------------
+
+BUG FIXES:
+* LaTeX errors when creating PDF version on windows R devel
+  and R released versions. (CRAN request)
