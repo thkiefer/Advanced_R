@@ -2,14 +2,16 @@ Package: sys
 Type: Package
 Title: Powerful and Reliable Tools for Running System Commands in R
 Version: 3.1
-Authors@R: c(person("Jeroen", "Ooms", role = c("aut", "cre"), 
-      email = "jeroen@berkeley.edu", comment = c(ORCID = "0000-0002-4035-0289")),
-    person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = "ctb"))
-Description: Drop-in replacements for the base system2() function with fine control
-    and consistent behavior across platforms. Supports clean interruption, timeout, 
-    background tasks, and streaming STDIN / STDOUT / STDERR over binary or text 
-    connections. Arguments on Windows automatically get encoded and quoted to work 
-    on different locales.
+Authors@R: c(person("Jeroen", "Ooms", role = c("aut", "cre"), email =
+    "jeroen@berkeley.edu", comment = c(ORCID = "0000-0002-4035-0289")),
+    person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role =
+    "ctb"))
+Description: Drop-in replacements for the base system2() function with
+    fine control and consistent behavior across platforms. Supports
+    clean interruption, timeout, background tasks, and streaming STDIN
+    / STDOUT / STDERR over binary or text connections. Arguments on
+    Windows automatically get encoded and quoted to work on different
+    locales.
 License: MIT + file LICENSE
 URL: https://github.com/jeroen/sys#readme
 BugReports: https://github.com/jeroen/sys/issues
@@ -20,10 +22,13 @@ Suggests: unix (>= 1.4), spelling, testthat
 Language: en-US
 NeedsCompilation: yes
 Packaged: 2019-03-10 17:35:59 UTC; jeroen
-Author: Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),
-  Gábor Csárdi [ctb]
+Author: Jeroen Ooms [aut, cre]
+    (<https://orcid.org/0000-0002-4035-0289>), Gábor Csárdi [ctb]
 Maintainer: Jeroen Ooms <jeroen@berkeley.edu>
 Repository: CRAN
 Date/Publication: 2019-03-10 20:40:03 UTC
 Built: R 3.5.3; x86_64-w64-mingw32; 2019-03-24 00:13:52 UTC; windows
 Archs: i386, x64
+InstallAgent: packrat 0.5.0
+InstallSource: CRAN
+Hash: dc2a997b1b9a2d3f9c234491153cb951

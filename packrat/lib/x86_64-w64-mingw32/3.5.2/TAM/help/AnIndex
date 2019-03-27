@@ -7,6 +7,7 @@ anova.tam	anova.tam
 anova.tam.latreg	anova.tam
 anova.tam.mml	anova.tam
 anova.tam.mml.3pl	anova.tam
+anova.tam.np	anova.tam
 anova.tamaan	anova.tam
 cfa.extract.itempars	cfa.extract.itempars
 data.cqc01	data.cqc
@@ -98,6 +99,7 @@ IRT.residuals.tam.jml	IRT.residuals
 IRT.residuals.tam.mml	IRT.residuals
 IRT.residuals.tam.mml.2pl	IRT.residuals
 IRT.residuals.tam.mml.mfr	IRT.residuals
+IRT.RISE	TAM-utilities
 IRT.simulate	IRT.simulate
 IRT.simulate.tam.mml	IRT.simulate
 IRT.simulate.tam.mml.2pl	IRT.simulate
@@ -117,6 +119,7 @@ logLik.tam.jml	tam.jml
 logLik.tam.latreg	anova.tam
 logLik.tam.mml	anova.tam
 logLik.tam.mml.3pl	anova.tam
+logLik.tam.np	anova.tam
 logLik.tamaan	anova.tam
 msq.itemfit	msq.itemfit
 msq.itemfitWLE	msq.itemfit
@@ -162,6 +165,7 @@ summary.tam.linking	tam.linking
 summary.tam.mml	tam.mml
 summary.tam.mml.3pl	tam.mml.3pl
 summary.tam.modelfit	tam.modelfit
+summary.tam.np	tam.np
 summary.tam.pv.mcmc	tam.pv
 summary.tam.Q3	tam.modelfit
 summary.tam.wle	tam.wle

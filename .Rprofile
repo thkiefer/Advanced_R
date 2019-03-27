@@ -1,12 +1,3 @@
-#### -- Packrat Autoloader (version 0.5.0) -- ####
-source("packrat/init.R")
-#### -- End Packrat Autoloader -- ####
+.libPaths(file.path(getwd(), "packrat", "lib", R.Version()$platform, 
+                    paste0(R.Version()[c("major", "minor")], collapse = ".")))
 
-# R-Pakete ----
-library(here)
-library(rmarkdown)
-library(microbenchmark)
-
-# Variablen ----
-
-# Funktionen ----

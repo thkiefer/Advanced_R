@@ -76,8 +76,8 @@ tam.mml                 Test Analysis Modules: Marginal Maximum
                         Likelihood Estimation
 tam.mml.3pl             3PL Structured Item Response Model in 'TAM'
 tam.modelfit            Model Fit Statistics in 'TAM'
-tam.np                  Unidimensional Nonparametric Item Response
-                        Model
+tam.np                  Unidimensional Non- and Semiparametric Item
+                        Response Model
 tam.personfit           Person Outfit and Infit Statistics
 tam.pv                  Plausible Value Imputation
 tam.se                  Standard Error Estimation
